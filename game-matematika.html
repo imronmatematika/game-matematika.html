@@ -1,0 +1,436 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Challenge Kelas X</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    color: #222;
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px #0005;
+}
+
+h1 {
+    text-align: center;
+    color: #304ffe;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+    background: #eef1ff;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.question {
+    font-size: 21px;
+    font-weight: bold;
+    margin: 25px 0;
+    line-height: 1.5;
+}
+
+.answers {
+    display: grid;
+    gap: 12px;
+}
+
+.answers button {
+    padding: 15px;
+    border: 2px solid #304ffe;
+    background: white;
+    color: #304ffe;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    transition: 0.2s;
+}
+
+.answers button:hover:not(:disabled) {
+    background: #304ffe;
+    color: white;
+}
+
+.answers button:disabled {
+    cursor: default;
+    opacity: 0.8;
+}
+
+.correct {
+    background: #28a745 !important;
+    color: white !important;
+    border-color: #28a745 !important;
+}
+
+.wrong {
+    background: #dc3545 !important;
+    color: white !important;
+    border-color: #dc3545 !important;
+}
+
+.feedback {
+    margin: 20px 0;
+    font-weight: bold;
+    text-align: center;
+    min-height: 25px;
+}
+
+.next, .start {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #304ffe;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.next:hover, .start:hover {
+    background: #172fc5;
+}
+
+.hidden {
+    display: none;
+}
+
+.result {
+    text-align: center;
+}
+
+.result h2 {
+    color: #304ffe;
+    font-size: 30px;
+}
+
+.progress {
+    height: 10px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #304ffe;
+    transition: 0.3s;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div id="home">
+        <h1>🧮 Math Challenge</h1>
+        <p class="subtitle">
+            Game Matematika Interaktif Kelas X SMA
+        </p>
+
+        <h3>Materi Permainan:</h3>
+        <ul>
+            <li>Aljabar</li>
+            <li>Persamaan Kuadrat</li>
+            <li>Eksponen</li>
+            <li>Logaritma</li>
+            <li>Trigonometri</li>
+            <li>Fungsi</li>
+        </ul>
+
+        <p>Jawablah 10 soal dengan benar dan raih skor tertinggi!</p>
+
+        <button class="start" onclick="startGame()">
+            🚀 MULAI GAME
+        </button>
+    </div>
+
+    <div id="game" class="hidden">
+
+        <h1>Math Challenge</h1>
+
+        <div class="info">
+            <span id="number">Soal 1/10</span>
+            <span>⭐ Skor: <span id="score">0</span></span>
+            <span>⏱️ <span id="timer">20</span>s</span>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+
+        <div class="question" id="question"></div>
+
+        <div class="answers" id="answers"></div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <button class="next hidden" id="next"
+        onclick="nextQuestion()">
+            SOAL BERIKUTNYA →
+        </button>
+
+    </div>
+
+    <div id="result" class="result hidden">
+        <h1>🏆 GAME SELESAI!</h1>
+        <h2 id="finalScore">0</h2>
+        <p id="message"></p>
+        <p id="detail"></p>
+
+        <button class="start" onclick="startGame()">
+            🔄 MAIN LAGI
+        </button>
+    </div>
+
+</div>
+
+<script>
+
+const questions = [
+{
+q: "Hasil dari 2x + 5x adalah ...",
+a: ["7x", "10x", "3x", "7x²"],
+c: 0
+},
+{
+q: "Jika x = 3, nilai dari 2x² + 1 adalah ...",
+a: ["13", "17", "19", "21"],
+c: 2
+},
+{
+q: "Hasil dari 2³ × 2² adalah ...",
+a: ["2⁵", "2⁶", "2⁴", "2¹"],
+c: 0
+},
+{
+q: "Nilai log₂ 8 adalah ...",
+a: ["2", "3", "4", "8"],
+c: 1
+},
+{
+q: "Akar-akar persamaan x² - 5x + 6 = 0 adalah ...",
+a: ["1 dan 6", "2 dan 3", "-2 dan -3", "1 dan 5"],
+c: 1
+},
+{
+q: "Nilai sin 30° adalah ...",
+a: ["1", "0", "1/2", "√3/2"],
+c: 2
+},
+{
+q: "Jika f(x) = 3x + 2, maka f(4) = ...",
+a: ["10", "12", "14", "16"],
+c: 2
+},
+{
+q: "Hasil dari (x + 2)(x + 3) adalah ...",
+a: ["x² + 5x + 6", "x² + 6x + 5", "x² + 5", "x² + 6"],
+c: 0
+},
+{
+q: "Nilai cos 60° adalah ...",
+a: ["1", "1/2", "√3/2", "0"],
+c: 1
+},
+{
+q: "Jika 2x - 4 = 10, nilai x adalah ...",
+a: ["5", "6", "7", "8"],
+c: 2
+}
+];
+
+let current = 0;
+let score = 0;
+let correct = 0;
+let wrong = 0;
+let time = 20;
+let timerInterval;
+let answered = false;
+let quiz = [];
+
+function startGame() {
+    current = 0;
+    score = 0;
+    correct = 0;
+    wrong = 0;
+
+    quiz = [...questions].sort(() => Math.random() - 0.5);
+
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("result").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+
+    showQuestion();
+}
+
+function showQuestion() {
+    answered = false;
+    time = 20;
+
+    clearInterval(timerInterval);
+
+    const q = quiz[current];
+
+    document.getElementById("number").innerText =
+        `Soal ${current + 1}/10`;
+
+    document.getElementById("score").innerText = score;
+    document.getElementById("timer").innerText = time;
+    document.getElementById("question").innerText = q.q;
+    document.getElementById("feedback").innerText = "";
+
+    document.getElementById("progress").style.width =
+        ((current) / quiz.length * 100) + "%";
+
+    document.getElementById("next").classList.add("hidden");
+
+    const answers = document.getElementById("answers");
+    answers.innerHTML = "";
+
+    q.a.forEach((answer, index) => {
+        const btn = document.createElement("button");
+
+        btn.innerText =
+            String.fromCharCode(65 + index) + ". " + answer;
+
+        btn.onclick = () => checkAnswer(index, btn);
+
+        answers.appendChild(btn);
+    });
+
+    timerInterval = setInterval(() => {
+        time--;
+        document.getElementById("timer").innerText = time;
+
+        if (time <= 0) {
+            clearInterval(timerInterval);
+            if (!answered) {
+                checkAnswer(-1);
+            }
+        }
+    }, 1000);
+}
+
+function checkAnswer(index, button) {
+    if (answered) return;
+
+    answered = true;
+    clearInterval(timerInterval);
+
+    const q = quiz[current];
+    const buttons = document.querySelectorAll(".answers button");
+
+    buttons.forEach((btn, i) => {
+        btn.disabled = true;
+
+        if (i === q.c) {
+            btn.classList.add("correct");
+        }
+    });
+
+    if (index === q.c) {
+        score += 10;
+        correct++;
+
+        document.getElementById("feedback").innerText =
+            "🎉 BENAR! Hebat sekali!";
+    } else {
+        wrong++;
+
+        document.getElementById("feedback").innerText =
+            index === -1
+            ? "⏰ Waktu habis! Jawaban benar ditandai hijau."
+            : "❌ Kurang tepat! Jawaban benar ditandai hijau.";
+
+        if (button) {
+            button.classList.add("wrong");
+        }
+    }
+
+    document.getElementById("score").innerText = score;
+
+    document.getElementById("next").classList.remove("hidden");
+
+    document.getElementById("next").innerText =
+        current === quiz.length - 1
+        ? "LIHAT HASIL 🏆"
+        : "SOAL BERIKUTNYA →";
+}
+
+function nextQuestion() {
+    current++;
+
+    if (current < quiz.length) {
+        showQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    clearInterval(timerInterval);
+
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+
+    document.getElementById("finalScore").innerText =
+        score + " / 100";
+
+    document.getElementById("detail").innerText =
+        `Jawaban benar: ${correct} | Jawaban salah: ${wrong}`;
+
+    let message = "";
+
+    if (score >= 90) {
+        message = "🌟 Luar biasa! Kamu jago matematika!";
+    } else if (score >= 70) {
+        message = "👏 Bagus! Terus tingkatkan kemampuanmu!";
+    } else if (score >= 50) {
+        message = "💪 Lumayan! Ayo belajar lebih giat!";
+    } else {
+        message = "📚 Jangan menyerah! Terus berlatih!";
+    }
+
+    document.getElementById("message").innerText = message;
+}
+
+</script>
+
+</body>
+</html>
